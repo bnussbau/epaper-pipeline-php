@@ -80,7 +80,7 @@ describe('ImageStage', function (): void {
 
     it('can configure from model', function (): void {
         $stage = new ImageStage;
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
 
         $result = $stage->configureFromModel($model);
 
@@ -150,7 +150,7 @@ describe('ImageStage', function (): void {
 
     it('can process with model configuration', function (): void {
         $stage = new ImageStage;
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
         $stage->configureFromModel($model);
 
         $result = $stage($this->testImagePath);

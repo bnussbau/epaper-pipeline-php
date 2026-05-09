@@ -8,7 +8,7 @@ use Bnussbau\EpaperPipeline\Model;
 
 describe('Model', function (): void {
     it('can get model data for OG PNG', function (): void {
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
         $data = $model->getData();
 
         expect($data->name)->toBe('og_png')
@@ -22,7 +22,7 @@ describe('Model', function (): void {
     });
 
     it('can get helper methods for model properties', function (): void {
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
 
         expect($model->getLabel())->toBe('TRMNL OG (1-bit)')
             ->and($model->getDescription())->toBe('TRMNL OG (1-bit)')

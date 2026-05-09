@@ -9,10 +9,11 @@ use Bnussbau\EpaperPipeline\Exceptions\ProcessingException;
 
 enum Model: string
 {
-    case OG = 'og';
-    case OG_PNG = 'og_png';
-    case OG_BMP = 'og_bmp';
-    case V2 = 'v2';
+
+    case TRMNL_OG = 'trmnl_og';
+    case TRMNL_OG_2BIT = 'trmnl_og_2bit';
+    case TRMNL_X = 'trmnl_x';
+
     case AMAZON_KINDLE_2024 = 'amazon_kindle_2024';
     case AMAZON_KINDLE_PAPERWHITE_6TH_GEN = 'amazon_kindle_paperwhite_6th_gen';
     case AMAZON_KINDLE_PAPERWHITE_7TH_GEN = 'amazon_kindle_paperwhite_7th_gen';
@@ -21,7 +22,6 @@ enum Model: string
     case INKY_IMPRESSION_7_3 = 'inky_impression_7_3';
     case KOBO_LIBRA_2 = 'kobo_libra_2';
     case AMAZON_KINDLE_OASIS_2 = 'amazon_kindle_oasis_2';
-    case OG_PLUS = 'og_plus';
     case KOBO_AURA_ONE = 'kobo_aura_one';
     case KOBO_AURA_HD = 'kobo_aura_hd';
     case INKY_IMPRESSION_13_3 = 'inky_impression_13_3';
@@ -32,6 +32,12 @@ enum Model: string
     case WAVESHARE_4_26 = 'waveshare_4_26';
     case WAVESHARE_7_5_BW = 'waveshare_7_5_bw';
 
+    // TRMNL legacy models
+    case OG = 'og';
+    case OG_PNG = 'og_png';
+    case OG_BMP = 'og_bmp';
+    case V2 = 'v2';
+
     /**
      * Get the model data from JSON
      *
@@ -39,8 +45,14 @@ enum Model: string
      */
     public function getData(): ModelData
     {
-        // OG case should resolve to og_plus data
-        $modelName = $this === self::OG ? 'og_plus' : $this->value;
+        // resolve aliases
+        $modelName = match ($this) {
+            self::OG => 'og_png',
+            self::TRMNL_OG => 'og_png',
+            self::TRMNL_OG_2BIT => 'og_plus',
+            self::TRMNL_X => 'v2',
+            default => $this->value,
+        };
 
         return ModelData::getByName($modelName);
     }
