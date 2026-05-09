@@ -19,7 +19,7 @@ describe('Pipeline', function (): void {
 
     it('can set and get model', function (): void {
         $pipeline = new EpaperPipeline;
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
 
         $pipeline->model($model);
 
@@ -28,7 +28,7 @@ describe('Pipeline', function (): void {
 
     it('can chain model setting', function (): void {
         $pipeline = new EpaperPipeline;
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
 
         $result = $pipeline->model($model);
 

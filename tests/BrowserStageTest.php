@@ -190,7 +190,7 @@ describe('BrowserStage', function (): void {
 
     it('can configure from model', function (): void {
         $stage = new BrowserStage;
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
 
         $result = $stage->configureFromModel($model);
 
@@ -199,7 +199,7 @@ describe('BrowserStage', function (): void {
 
     it('configures dimensions from model when not using default dimensions', function (): void {
         $stage = new BrowserStage;
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
 
         // Get model dimensions
         $modelWidth = $model->getWidth();
@@ -221,7 +221,7 @@ describe('BrowserStage', function (): void {
 
     it('ignores model dimensions when useDefaultDimensions is called', function (): void {
         $stage = new BrowserStage;
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
 
         // Set useDefaultDimensions first
         $stage->useDefaultDimensions();
@@ -243,7 +243,7 @@ describe('BrowserStage', function (): void {
 
     it('can process with model-configured dimensions', function (): void {
         $stage = new BrowserStage;
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
 
         $stage
             ->html('<html><body><h1>Test</h1></body></html>')
@@ -261,7 +261,7 @@ describe('BrowserStage', function (): void {
 
     it('can process with useDefaultDimensions ignoring model', function (): void {
         $stage = new BrowserStage;
-        $model = Model::OG_PNG;
+        $model = Model::TRMNL_OG;
 
         $stage
             ->html('<html><body><h1>Test</h1></body></html>')
