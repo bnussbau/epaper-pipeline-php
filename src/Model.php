@@ -9,7 +9,6 @@ use Bnussbau\EpaperPipeline\Exceptions\ProcessingException;
 
 enum Model: string
 {
-
     case TRMNL_OG = 'trmnl_og';
     case TRMNL_OG_2BIT = 'trmnl_og_2bit';
     case TRMNL_X = 'trmnl_x';
