@@ -197,7 +197,7 @@ describe('Pipeline', function (): void {
         $model = Model::SEEED_E1002; // Has color-spectra6 palette
 
         // Verify model has color palette
-        expect($model->getPaletteIds())->toContain('color-spectra6');
+        expect($model->getPaletteIds())->toContain('color-6a');
 
         // Load HTML file with color palette colors
         $htmlPath = __DIR__.'/assets/color_spectra6_test.html';

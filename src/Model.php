@@ -12,6 +12,7 @@ enum Model: string
     case TRMNL_OG = 'trmnl_og';
     case TRMNL_OG_2BIT = 'trmnl_og_2bit';
     case TRMNL_X = 'trmnl_x';
+    case TRMNL_OG_BWRY = 'trmnl_og_bwry';
 
     case AMAZON_KINDLE_2024 = 'amazon_kindle_2024';
     case AMAZON_KINDLE_PAPERWHITE_6TH_GEN = 'amazon_kindle_paperwhite_6th_gen';
@@ -30,11 +31,34 @@ enum Model: string
     case SEEED_E1002 = 'seeed_e1002';
     case WAVESHARE_4_26 = 'waveshare_4_26';
     case WAVESHARE_7_5_BW = 'waveshare_7_5_bw';
+    case GENERIC_16_9 = 'generic_16_9';
+    case PALMA = 'palma';
+    case ONYX_BOOX_GO_7 = 'onyx_boox_go_7';
+    case KOBO_GLO = 'kobo_glo';
+    case WAVESHARE_7_5_BWR = 'waveshare_7_5_bwr';
+    case WAVESHARE_7_5_BWRY = 'waveshare_7_5_bwry';
+    case ONXY_BOOX_NOVA_AIR_C = 'onxy_boox_nova_air_c';
+    case XTEINK_X4 = 'xteink_x4';
+    case NOOK_SIMPLE_TOUCH = 'nook_simple_touch';
+    case KOBO_SAGE = 'kobo_sage';
+    case AMAZON_KINDLE_VOYAGE = 'amazon_kindle_voyage';
+    case INKPLATE_5_2 = 'inkplate_5_2';
+    case RASPBERRY_PI_TOUCH_2 = 'raspberry_pi_touch_2';
+    case ED133UT2 = 'ed133ut2';
+    case AVALUE_EPD_42S = 'avalue_epd_42s';
+    case KOBO_TOUCH = 'kobo_touch';
+    case KOBO_FORMA = 'kobo_forma';
+    case OPENFRAME = 'openframe';
+    case AMAZON_KINDLE_PAPERWHITE_SIGNATURE_11TH_GEN = 'amazon_kindle_paperwhite_signature_11th_gen';
+    case INKPLATE_6_PLUS = 'inkplate_6_plus';
+    case KOBO_AURA_H2O_2 = 'kobo_aura_h2o_2';
 
     // TRMNL legacy models
     case OG = 'og';
     case OG_PNG = 'og_png';
     case OG_BMP = 'og_bmp';
+    case OG_PLUS = 'og_plus';
+    case OG_BWRY = 'og_bwry';
     case V2 = 'v2';
 
     /**
@@ -49,6 +73,7 @@ enum Model: string
             self::OG => 'og_png',
             self::TRMNL_OG => 'og_png',
             self::TRMNL_OG_2BIT => 'og_plus',
+            self::TRMNL_OG_BWRY => 'og_bwry',
             self::TRMNL_X => 'v2',
             default => $this->value,
         };

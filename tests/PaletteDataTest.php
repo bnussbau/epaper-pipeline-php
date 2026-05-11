@@ -75,7 +75,7 @@ describe('PaletteData', function (): void {
             '#FFFF00',
             '#FFA500',
         ]);
-        expect($palette->frameworkClass)->toBe('');
+        expect($palette->frameworkClass)->toBe('screen--color-7a');
     });
 
     it('throws when palettes JSON file does not exist', function (): void {
