@@ -2,6 +2,47 @@
 
 All notable changes to `trmnl-pipeline-php` will be documented in this file.
 
+## 1.0.0 - 2026-05-12
+
+### What's Changed
+
+* BREAKING CHANGE: updated name to `epaper-pipeline-php` and updated namespace to `Bnussbau\EpaperPipeline`
+  
+* feat: update models, palettes (via api)
+  
+  * AMAZON_KINDLE_PAPERWHITE_SIGNATURE_11TH_GEN
+  * AMAZON_KINDLE_VOYAGE
+  * AVALUE_EPD_42S
+  * ED133UT2
+  * GENERIC_16_9
+  * INKPLATE_5_2
+  * INKPLATE_6_PLUS
+  * KOBO_AURA_H2O_2
+  * KOBO_FORMA
+  * KOBO_GLO
+  * KOBO_SAGE
+  * KOBO_TOUCH
+  * NOOK_SIMPLE_TOUCH
+  * ONXY_BOOX_NOVA_AIR_C
+  * ONYX_BOOX_GO_7
+  * OPENFRAME
+  * PALMA
+  * RASPBERRY_PI_TOUCH_2
+  * TRMNL_OG_BWRY
+  * WAVESHARE_7_5_BWR
+  * WAVESHARE_7_5_BWRY
+  * XTEINK_X4
+  
+* chore: renamed enum cases in Model
+  
+  * OG_PNG -> TRMNL_OG
+  * OG_PLUS -> TRMNL_OG_2BIT
+  * V2 -> TRMNL_X
+  * legacy values are kept
+  
+
+**Full Changelog**: https://github.com/bnussbau/epaper-pipeline-php/compare/0.8.0...1.0.0
+
 ## 0.9.0 - 2026-05-11
 
 ### What's Changed
