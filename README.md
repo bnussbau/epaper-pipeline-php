@@ -8,7 +8,7 @@
 ePaper Pipeline PHP provides a streamlined API, based on the pipeline pattern, for converting HTML content (or images) into optimized images for e-Paper devices. The image processing pipeline includes features like scaling, rotation, grayscale conversion, color quantization, and format-specific optimizations. This package is used in [usetrmnl/larapaper](https://github.com/usetrmnl/larapaper).
 Devices model presets are provided by the [TRMNL Models API](https://trmnl.com/api/models).
 
-Command line wrapper for this package: [epaper-pipeline-cmd](https://github.com/bnussbau/trmnl-pipeline-cmd)
+Command line wrapper for this package: [epaper-pipeline-cmd](https://github.com/bnussbau/epaper-pipeline-cmd)
 
 <img width="800" height="480" alt="browsershot_cham2v3cji4nbZ5JXN6_processed" src="https://github.com/user-attachments/assets/0bb7aa88-3854-4e4b-a67d-3980196027b1" />
 
