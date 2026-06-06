@@ -521,6 +521,13 @@ class ImageStage implements StageInterface
             return true;
         }
 
+        // Full-color / true-color devices (e.g. 24-bit) have no enumerated colormap,
+        // so palette->colors is null and no colormap is set. Their color count exceeds
+        // the 256-entry colormap range, so treat > 256 colors as full RGB.
+        if ($this->colors !== null && $this->colors > 256) {
+            return true;
+        }
+
         // Default to false (grayscale)
         return false;
     }
