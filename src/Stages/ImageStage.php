@@ -7,6 +7,7 @@ namespace Bnussbau\EpaperPipeline\Stages;
 use Bnussbau\EpaperPipeline\Data\PaletteData;
 use Bnussbau\EpaperPipeline\EpaperPipeline;
 use Bnussbau\EpaperPipeline\Exceptions\ProcessingException;
+use Bnussbau\EpaperPipeline\FakeImageFactory;
 use Bnussbau\EpaperPipeline\Model;
 use Bnussbau\EpaperPipeline\StageInterface;
 use Imagick;
@@ -640,12 +641,7 @@ class ImageStage implements StageInterface
             throw new ProcessingException('Failed to create mock processed image');
         }
 
-        $white = imagecolorallocate($image, 255, 255, 255);
-        if ($white === false) {
-            throw new ProcessingException('Failed to allocate color for mock processed image');
-        }
-
-        imagefill($image, 0, 0, $white);
+        FakeImageFactory::fill($image, $width, $height, EpaperPipeline::getFakeSeed());
 
         // Save in the appropriate format
         match ($format) {

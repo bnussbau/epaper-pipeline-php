@@ -14,12 +14,18 @@ afterEach(function (): void {
 
 it('can enable and disable fake mode', function (): void {
     expect(EpaperPipeline::isFake())->toBeFalse();
+    expect(EpaperPipeline::getFakeSeed())->toBeNull();
 
     EpaperPipeline::fake();
     expect(EpaperPipeline::isFake())->toBeTrue();
+    expect(EpaperPipeline::getFakeSeed())->toBeNull();
+
+    EpaperPipeline::fake(seed: 'plugin-1');
+    expect(EpaperPipeline::getFakeSeed())->toBe('plugin-1');
 
     EpaperPipeline::restore();
     expect(EpaperPipeline::isFake())->toBeFalse();
+    expect(EpaperPipeline::getFakeSeed())->toBeNull();
 });
 
 it('returns mock image path when browser stage is in fake mode', function (): void {
@@ -124,4 +130,63 @@ it('still validates file existence in fake mode', function (): void {
 
     expect(fn (): string => $imageStage('/nonexistent/file.png'))
         ->toThrow(Exception::class, 'Invalid or missing image file');
+});
+
+function createFakeProcessedImage(?string $seed = null): string
+{
+    EpaperPipeline::fake($seed);
+
+    $inputImage = tempnam(sys_get_temp_dir(), 'test_input_').'.png';
+    $image = imagecreate(10, 10);
+    $white = imagecolorallocate($image, 255, 255, 255);
+    imagefill($image, 0, 0, $white);
+    imagepng($image, $inputImage);
+    imagedestroy($image);
+
+    $imageStage = new ImageStage;
+    $imageStage->format('png')->width(800)->height(480);
+
+    $result = $imageStage($inputImage);
+
+    unlink($inputImage);
+
+    return $result;
+}
+
+it('produces identical bytes without a seed', function (): void {
+    $firstImage = createFakeProcessedImage();
+    $secondImage = createFakeProcessedImage();
+
+    expect(file_get_contents($firstImage))->toBe(file_get_contents($secondImage));
+
+    unlink($firstImage);
+    unlink($secondImage);
+});
+
+it('produces different bytes for different seeds', function (): void {
+    $firstImage = createFakeProcessedImage('seed-a');
+    $secondImage = createFakeProcessedImage('seed-b');
+
+    expect(file_get_contents($firstImage))->not->toBe(file_get_contents($secondImage));
+
+    unlink($firstImage);
+    unlink($secondImage);
+});
+
+it('produces identical bytes for the same seed', function (): void {
+    $firstImage = createFakeProcessedImage('same-seed');
+    $secondImage = createFakeProcessedImage('same-seed');
+
+    expect(file_get_contents($firstImage))->toBe(file_get_contents($secondImage));
+
+    unlink($firstImage);
+    unlink($secondImage);
+});
+
+it('clears the seed when fake mode is restored', function (): void {
+    EpaperPipeline::fake(seed: 'temporary-seed');
+    expect(EpaperPipeline::getFakeSeed())->toBe('temporary-seed');
+
+    EpaperPipeline::restore();
+    expect(EpaperPipeline::getFakeSeed())->toBeNull();
 });

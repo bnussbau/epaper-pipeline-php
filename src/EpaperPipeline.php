@@ -18,6 +18,8 @@ class EpaperPipeline
 
     private static bool $isFake = false;
 
+    private static ?string $fakeSeed = null;
+
     public function __construct()
     {
         $this->pipeline = new Pipeline;
@@ -77,11 +79,14 @@ class EpaperPipeline
     }
 
     /**
-     * Enable fake mode for testing - prevents actual Browsershot and Imagick operations
+     * Enable fake mode for testing - prevents actual Browsershot and Imagick operations.
+     *
+     * @param  string|null  $seed  When set, mock images are deterministic but distinct per seed value.
      */
-    public static function fake(): void
+    public static function fake(?string $seed = null): void
     {
         self::$isFake = true;
+        self::$fakeSeed = $seed;
     }
 
     /**
@@ -90,6 +95,7 @@ class EpaperPipeline
     public static function restore(): void
     {
         self::$isFake = false;
+        self::$fakeSeed = null;
     }
 
     /**
@@ -98,5 +104,13 @@ class EpaperPipeline
     public static function isFake(): bool
     {
         return self::$isFake;
+    }
+
+    /**
+     * Get the current fake mode seed, if any.
+     */
+    public static function getFakeSeed(): ?string
+    {
+        return self::$fakeSeed;
     }
 }

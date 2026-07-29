@@ -170,6 +170,17 @@ $result = (new EpaperPipeline())
 
 echo "Mock image generated: $result";
 
+// Enable fake mode with a seed to produce distinct mock images per seed
+EpaperPipeline::fake(seed: 'plugin-1');
+
+$seededResult = (new EpaperPipeline())
+    ->model(Model::OG)
+    ->pipe(new BrowserStage()->html($html))
+    ->pipe(new ImageStage())
+    ->process();
+
+echo "Seeded mock image generated: $seededResult";
+
 // Disable fake mode when done
 EpaperPipeline::restore();
 ```

@@ -6,6 +6,7 @@ namespace Bnussbau\EpaperPipeline\Stages;
 
 use Bnussbau\EpaperPipeline\EpaperPipeline;
 use Bnussbau\EpaperPipeline\Exceptions\ProcessingException;
+use Bnussbau\EpaperPipeline\FakeImageFactory;
 use Bnussbau\EpaperPipeline\Model;
 use Bnussbau\EpaperPipeline\StageInterface;
 use Spatie\Browsershot\Browsershot;
@@ -221,17 +222,15 @@ class BrowserStage implements StageInterface
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'browsershot_fake_').'.png';
 
-        $image = imagecreate(800, 480);
+        $width = self::DEFAULT_WIDTH;
+        $height = self::DEFAULT_HEIGHT;
+
+        $image = imagecreate($width, $height);
         if ($image === false) {
             throw new ProcessingException('Failed to create mock image');
         }
 
-        $white = imagecolorallocate($image, 255, 255, 255);
-        if ($white === false) {
-            throw new ProcessingException('Failed to allocate color for mock image');
-        }
-
-        imagefill($image, 0, 0, $white);
+        FakeImageFactory::fill($image, $width, $height, EpaperPipeline::getFakeSeed());
         imagepng($image, $tempFile);
         imagedestroy($image);
 
