@@ -2,6 +2,14 @@
 
 All notable changes to `trmnl-pipeline-php` will be documented in this file.
 
+## 1.1.0 - 2026-07-29
+
+### What's Changed
+
+* feat: add seed option to produce distinct mock images per seed
+
+**Full Changelog**: https://github.com/bnussbau/epaper-pipeline-php/commits/1.1.0
+
 ## 1.0.0 - 2026-05-12
 
 ### What's Changed
