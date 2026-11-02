@@ -23,7 +23,7 @@
     "league/pipeline": "^1.0"
   },
   "require-dev": {
-    "pestphp/pest": "^4.0",
+    "pestphp/pest": "^5.3",
     "laravel/pint": "^1.0",
     "phpstan/phpstan": "^1.10",
     "rector/rector": "^1.0"
