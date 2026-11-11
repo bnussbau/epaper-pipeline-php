@@ -26,7 +26,7 @@
         },
         {
             "id": "color-3bwr",
-            "name": "Color (3 colors)",
+            "name": "Color (3 colors: black, red, white)",
             "grays": 2,
             "colors": [
                 "#000000",
@@ -38,7 +38,7 @@
         },
         {
             "id": "color-3bwy",
-            "name": "Color (3 colors)",
+            "name": "Color (3 colors: black, yellow, white)",
             "grays": 2,
             "colors": [
                 "#000000",
@@ -50,7 +50,7 @@
         },
         {
             "id": "color-4bwry",
-            "name": "Color (4 colors)",
+            "name": "Color (4 colors: black, red, white, yellow)",
             "grays": 2,
             "colors": [
                 "#000000",

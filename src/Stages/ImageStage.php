@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bnussbau\EpaperPipeline\Stages;
 
+use Bnussbau\EpaperPipeline\Data\ModelData;
 use Bnussbau\EpaperPipeline\Data\PaletteData;
 use Bnussbau\EpaperPipeline\EpaperPipeline;
 use Bnussbau\EpaperPipeline\Exceptions\ProcessingException;
@@ -65,9 +66,14 @@ class ImageStage implements StageInterface
     private ?array $colormap = null;
 
     /**
-     * Palette ID if colormap was set from a palette
+     * Palette ID if the stage was configured from a palette
      */
     private ?string $paletteId = null;
+
+    /**
+     * Palette chosen by the caller via palette()
+     */
+    private ?string $explicitPaletteId = null;
 
     /**
      * Control global dithering behavior for this stage
@@ -123,6 +129,14 @@ class ImageStage implements StageInterface
     }
 
     /**
+     * Get number of colors (for testing)
+     */
+    public function getColors(): ?int
+    {
+        return $this->colors;
+    }
+
+    /**
      * Set bit depth
      */
     public function bitDepth(int $depth): self
@@ -130,6 +144,14 @@ class ImageStage implements StageInterface
         $this->bitDepth = $depth;
 
         return $this;
+    }
+
+    /**
+     * Get bit depth (for testing)
+     */
+    public function getBitDepth(): ?int
+    {
+        return $this->bitDepth;
     }
 
     /**
@@ -181,8 +203,40 @@ class ImageStage implements StageInterface
     {
         $this->colormap = $colors;
         $this->paletteId = null; // Clear palette ID when manually setting colormap
+        $this->explicitPaletteId = null;
 
         return $this;
+    }
+
+    /**
+     * Get colormap (for testing)
+     *
+     * @return array<string>|null
+     */
+    public function getColormap(): ?array
+    {
+        return $this->colormap;
+    }
+
+    /**
+     * Use a palette from palettes.json
+     *
+     * This overrides the model's default palette.
+     */
+    public function palette(string $paletteId): self
+    {
+        $this->explicitPaletteId = $paletteId;
+        $this->applyPalette($paletteId);
+
+        return $this;
+    }
+
+    /**
+     * Get the palette id applied to this stage (for testing)
+     */
+    public function getPaletteId(): ?string
+    {
+        return $this->paletteId;
     }
 
     /**
@@ -222,12 +276,6 @@ class ImageStage implements StageInterface
         if ($this->height === null) {
             $this->height = $data->height;
         }
-        if ($this->colors === null) {
-            $this->colors = $data->colors;
-        }
-        if ($this->bitDepth === null) {
-            $this->bitDepth = $data->bitDepth;
-        }
         if ($this->rotation === null) {
             $this->rotation = $data->rotation;
         }
@@ -241,26 +289,83 @@ class ImageStage implements StageInterface
             $this->format = $this->getFormatFromMimeType($data->mimeType);
         }
 
-        // Configure colormap from model's palette IDs
-        if ($this->colormap === null && $data->paletteIds !== []) {
-            $this->configureColormapFromPalette($data->paletteIds[0]);
+        $paletteId = $this->resolvePaletteId($data);
+        if ($paletteId !== null) {
+            $this->applyPalette($paletteId);
+        }
+
+        if ($this->colors === null) {
+            $this->colors = $data->colors;
+        }
+        if ($this->bitDepth === null) {
+            $this->bitDepth = $data->bitDepth;
         }
 
         return $this;
     }
 
     /**
-     * Configure colormap from palette ID
+     * Palette to apply: an explicit palette(), otherwise the model default
+     * when the caller has not set a colormap.
      */
-    private function configureColormapFromPalette(string $paletteId): void
+    private function resolvePaletteId(ModelData $data): ?string
+    {
+        if ($this->explicitPaletteId !== null) {
+            return $this->explicitPaletteId;
+        }
+
+        if ($this->colormap !== null) {
+            return null;
+        }
+
+        return $data->resolvedPaletteId();
+    }
+
+    /**
+     * Apply a palette's colors or grayscale depth.
+     *
+     * Color lists become the colormap. Grayscale palettes set the color count
+     * and bit depth when those have not been set explicitly. Full-color palettes
+     * without a color list leave the model color depth unchanged.
+     */
+    private function applyPalette(string $paletteId): void
     {
         $palette = PaletteData::getById($paletteId);
 
-        // Only set colormap if palette exists and has colors array
-        if ($palette !== null && $palette->colors !== null) {
-            $this->colormap = $palette->colors;
-            $this->paletteId = $paletteId; // Store palette ID for color detection
+        if (! $palette instanceof PaletteData) {
+            return;
         }
+
+        $this->paletteId = $paletteId;
+
+        if ($palette->colors !== null) {
+            $this->colormap = $palette->colors;
+
+            return;
+        }
+
+        $this->colormap = null;
+
+        if (! $this->isGrayscalePalette($palette)) {
+            return;
+        }
+
+        if ($this->colors === null && $palette->grays > 0) {
+            $this->colors = $palette->grays;
+        }
+
+        if ($this->bitDepth === null && $palette->grays > 0) {
+            $this->bitDepth = max(1, (int) round(log($palette->grays, 2)));
+        }
+    }
+
+    /**
+     * Grayscale palettes have a gray count and no color list.
+     * Full-color palettes such as color-24bit also omit the color list.
+     */
+    private function isGrayscalePalette(PaletteData $palette): bool
+    {
+        return $palette->colors === null && ! str_starts_with($palette->id, 'color');
     }
 
     /**
@@ -435,6 +540,7 @@ class ImageStage implements StageInterface
     {
         return match ($mimeType) {
             'image/bmp', 'bmp' => 'bmp',
+            'image/webp', 'webp' => 'webp',
             default => self::DEFAULT_FORMAT,
         };
     }
@@ -512,18 +618,14 @@ class ImageStage implements StageInterface
         if ($this->paletteId !== null) {
             $palette = PaletteData::getById($this->paletteId);
             // If palette has colors array (not null), it's a color palette
-            if ($palette !== null) {
+            if ($palette instanceof PaletteData) {
                 return $palette->colors !== null;
             }
         }
 
         // Use colors integer property - if > 0 and colormap is set, there are colors
-        if ($this->colors !== null && $this->colors > 0 && $this->colormap !== null) {
-            return true;
-        }
-
         // Default to false (grayscale)
-        return false;
+        return $this->colors !== null && $this->colors > 0 && $this->colormap !== null;
     }
 
     /**
@@ -538,7 +640,7 @@ class ImageStage implements StageInterface
 
         // If colormap is set (from color palette), use the number of colors in the colormap
         // Otherwise use the colors property from model or default
-        $colorCount = $this->colormap !== null && ! empty($this->colormap)
+        $colorCount = $this->colormap !== null && $this->colormap !== []
             ? count($this->colormap)
             : ($this->colors ?? self::DEFAULT_COLORS);
 

@@ -157,7 +157,7 @@ describe('Pipeline', function (): void {
 
     it('processes color palette end-to-end with inky_impression_13_3 model', function (): void {
         $pipeline = new EpaperPipeline;
-        $model = Model::INKY_IMPRESSION_13_3; // Has color-6a palette
+        $model = Model::INKY_IMPRESSION_13_3; // Supports color-6a; default palette is bw
 
         // Verify model has color palette
         expect($model->getPaletteIds())->toContain('color-6a');
@@ -173,7 +173,7 @@ describe('Pipeline', function (): void {
         $browserStage = new BrowserStage;
         $browserStage->html($htmlContent);
 
-        $imageStage = new ImageStage;
+        $imageStage = (new ImageStage)->palette('color-6a');
 
         // Process through pipeline
         $pipeline

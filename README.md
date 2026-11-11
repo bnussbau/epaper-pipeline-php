@@ -263,9 +263,9 @@ use Bnussbau\EpaperPipeline\Stages\ImageStage;
 
 #### Color Support
 
-The pipeline supports color images via palettes defined in `palettes.json`. Models can specify one or more palette IDs, and the first palette with a `colors` array will be automatically applied. Color palettes use RGB colorspace for quantization and support dithering.
+The pipeline supports color images via palettes defined in `palettes.json`. Each model has a `default_palette_id` that is applied when generating an image, unless `palette()` or `colormap()` is set. Color palettes use RGB colorspace for quantization and support dithering.
 
-**Example 1: Using Model Preset with Color Palette**
+**Example 1: Using Model Preset with an explicit color palette**
 
 ```php
 use Bnussbau\EpaperPipeline\Model;
@@ -275,12 +275,12 @@ use Bnussbau\EpaperPipeline\Stages\ImageStage;
 
 $html = file_get_contents('./tests/assets/color_6a_test.html');
 
-// Inky Impression 13.3 model has color-6a palette (6 colors: red, green, blue, yellow, black, white)
+// Inky Impression 13.3 defaults to black and white. color-6a is red, green, blue, yellow, black, and white.
 $image = new EpaperPipeline()
     ->model(Model::INKY_IMPRESSION_13_3)
     ->pipe(new BrowserStage()
         ->html($html))
-    ->pipe(new ImageStage())
+    ->pipe((new ImageStage())->palette('color-6a'))
     ->process();
 
 echo "Generated color image: $image";

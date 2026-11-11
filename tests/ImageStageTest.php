@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Bnussbau\EpaperPipeline\Data\PaletteData;
 use Bnussbau\EpaperPipeline\Exceptions\ProcessingException;
 use Bnussbau\EpaperPipeline\Model;
 use Bnussbau\EpaperPipeline\Stages\ImageStage;
@@ -85,6 +86,77 @@ describe('ImageStage', function (): void {
         $result = $stage->configureFromModel($model);
 
         expect($result)->toBe($stage);
+    });
+
+    it('uses the model default palette when none is set', function (): void {
+        $inky = (new ImageStage)->configureFromModel(Model::INKY_IMPRESSION_13_3);
+
+        expect($inky->getPaletteId())->toBe('bw')
+            ->and($inky->getColormap())->toBeNull()
+            ->and($inky->getColors())->toBe(2)
+            ->and($inky->getBitDepth())->toBe(1);
+
+        $seeed = (new ImageStage)->configureFromModel(Model::SEEED_E1002);
+        $color6a = PaletteData::getById('color-6a');
+
+        expect($seeed->getPaletteId())->toBe('color-6a')
+            ->and($seeed->getColormap())->toBe($color6a?->colors);
+    });
+
+    it('keeps an explicit palette when configuring from a model', function (): void {
+        $stage = (new ImageStage)
+            ->palette('color-6a')
+            ->configureFromModel(Model::INKY_IMPRESSION_13_3);
+
+        expect($stage->getPaletteId())->toBe('color-6a')
+            ->and($stage->getColormap())->toBe(PaletteData::getById('color-6a')?->colors);
+    });
+
+    it('quantizes grayscale models to the default palette depth', function (): void {
+        $stage = (new ImageStage)->configureFromModel(Model::OG_PLUS);
+
+        expect($stage->getColors())->toBe(2)
+            ->and($stage->getBitDepth())->toBe(1);
+
+        $explicit = (new ImageStage)
+            ->colors(4)
+            ->bitDepth(2)
+            ->configureFromModel(Model::OG_PLUS);
+
+        expect($explicit->getColors())->toBe(4)
+            ->and($explicit->getBitDepth())->toBe(2);
+    });
+
+    it('keeps an explicit colormap instead of the default palette', function (): void {
+        $colormap = ['#111111', '#eeeeee'];
+        $stage = (new ImageStage)
+            ->colormap($colormap)
+            ->configureFromModel(Model::SEEED_E1002);
+
+        expect($stage->getColormap())->toBe($colormap)
+            ->and($stage->getPaletteId())->toBeNull();
+    });
+
+    it('leaves full color palettes on the model color depth', function (): void {
+        $stage = (new ImageStage)->configureFromModel(Model::RASPBERRY_PI_TOUCH_2);
+
+        expect($stage->getPaletteId())->toBe('color-24bit')
+            ->and($stage->getColormap())->toBeNull()
+            ->and($stage->getColors())->toBe(16777216)
+            ->and($stage->getBitDepth())->toBe(24);
+    });
+
+    it('uses webp for models that declare a webp mime type', function (): void {
+        $stage = (new ImageStage)->configureFromModel(Model::TIDBYT);
+
+        expect($stage->getFormat())->toBe('webp');
+    });
+
+    it('ignores an unknown palette id', function (): void {
+        $stage = (new ImageStage)->palette('not-a-palette');
+
+        expect($stage->getPaletteId())->toBeNull()
+            ->and($stage->getColormap())->toBeNull();
     });
 
     it('can process image from string path', function (): void {

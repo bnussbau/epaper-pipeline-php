@@ -76,6 +76,8 @@ describe('ModelData', function (): void {
         expect($model->offsetY)->toBe(0);
         expect($model->kind)->toBe('trmnl');
         expect($model->paletteIds)->toBe(['bw']);
+        expect($model->defaultPaletteId)->toBe('bw');
+        expect($model->resolvedPaletteId())->toBe('bw');
     });
 
     it('has correct properties for Amazon Kindle 2024 model', function (): void {
@@ -102,8 +104,60 @@ describe('ModelData', function (): void {
         $inkyImpression73 = ModelData::getByName('inky_impression_7_3');
         $inkyImpression133 = ModelData::getByName('inky_impression_13_3');
 
-        expect($inkyImpression73->paletteIds)->toBe(['color-7a', 'color-6a', 'bw']);
-        expect($inkyImpression133->paletteIds)->toBe(['color-6a', 'bw']);
+        expect($inkyImpression73->paletteIds)->toBe(['bw', 'color-7a', 'color-6a']);
+        expect($inkyImpression73->defaultPaletteId)->toBe('bw');
+        expect($inkyImpression133->paletteIds)->toBe(['bw', 'color-6a']);
+        expect($inkyImpression133->defaultPaletteId)->toBe('bw');
+
+        $seeedE1002 = ModelData::getByName('seeed_e1002');
+        expect($seeedE1002->defaultPaletteId)->toBe('color-6a');
+        expect($seeedE1002->resolvedPaletteId())->toBe('color-6a');
+    });
+
+    it('falls back to the first palette id when no default is set', function (): void {
+        $model = new ModelData(
+            name: 'custom',
+            label: '',
+            description: '',
+            width: 1,
+            height: 1,
+            colors: 2,
+            bitDepth: 1,
+            scaleFactor: 1.0,
+            rotation: 0,
+            mimeType: 'image/png',
+            offsetX: 0,
+            offsetY: 0,
+            publishedAt: '',
+            kind: 'byod',
+            paletteIds: ['gray-4', 'bw'],
+            defaultPaletteId: null,
+        );
+
+        expect($model->resolvedPaletteId())->toBe('gray-4');
+    });
+
+    it('returns null when a model has no palette', function (): void {
+        $model = new ModelData(
+            name: 'custom',
+            label: '',
+            description: '',
+            width: 1,
+            height: 1,
+            colors: 2,
+            bitDepth: 1,
+            scaleFactor: 1.0,
+            rotation: 0,
+            mimeType: 'image/png',
+            offsetX: 0,
+            offsetY: 0,
+            publishedAt: '',
+            kind: 'byod',
+            paletteIds: [],
+            defaultPaletteId: '',
+        );
+
+        expect($model->resolvedPaletteId())->toBeNull();
     });
 
 });

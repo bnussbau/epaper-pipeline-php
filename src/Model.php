@@ -52,6 +52,25 @@ enum Model: string
     case AMAZON_KINDLE_PAPERWHITE_SIGNATURE_11TH_GEN = 'amazon_kindle_paperwhite_signature_11th_gen';
     case INKPLATE_6_PLUS = 'inkplate_6_plus';
     case KOBO_AURA_H2O_2 = 'kobo_aura_h2o_2';
+    case PLAYDATE = 'playdate';
+    case TIDBYT = 'tidbyt';
+    case INKPLATE_6_COLOR = 'inkplate_6_color';
+    case SEEED_E1003 = 'seeed_e1003';
+    case SEEED_E1004 = 'seeed_e1004';
+    case ONYX_BOOX_POKE_5 = 'onyx_boox_poke_5';
+    case REMARKABLE_PAPER_2 = 'remarkable_paper_2';
+    case META_PORTAL = 'meta_portal';
+    case BYOD_CUSTOM = 'byod_custom';
+    case WAVESHARE_5_8_BW = 'waveshare_5_8_bw';
+    case INKPLATE_13_SPECTRA = 'inkplate_13_spectra';
+    case TCL_NXTPAPER_14 = 'tcl_nxtpaper_14';
+    case KOBO_LIBRA_COLOR = 'kobo_libra_color';
+    case XTEINK_X3 = 'xteink_x3';
+    case SEEED_STICKY = 'seeed_sticky';
+    case ONYX_BOOX_GO_10_3_LUMI = 'onyx_boox_go_10_3_lumi';
+    case VESTABOARD = 'vestaboard';
+    case KOBO_CLARA_2E = 'kobo_clara_2e';
+    case JOAN_13 = 'joan_13';
 
     // TRMNL legacy models
     case OG = 'og';
@@ -151,6 +170,16 @@ enum Model: string
     public function getPaletteIds(): array
     {
         return $this->getData()->paletteIds;
+    }
+
+    /**
+     * Palette used when generating an image without an explicit palette
+     *
+     * @throws ProcessingException
+     */
+    public function getDefaultPaletteId(): ?string
+    {
+        return $this->getData()->defaultPaletteId;
     }
 
     /**

@@ -28,6 +28,7 @@ readonly class ModelData
         public string $kind,
         /** @var array<string> */
         public array $paletteIds,
+        public ?string $defaultPaletteId,
     ) {}
 
     /**
@@ -69,6 +70,8 @@ readonly class ModelData
                 throw new ProcessingException("Model data missing required 'name' field");
             }
 
+            $defaultPaletteId = $modelData['default_palette_id'] ?? null;
+
             $models[$modelData['name']] = new self(
                 name: $modelData['name'],
                 label: $modelData['label'] ?? '',
@@ -85,6 +88,7 @@ readonly class ModelData
                 publishedAt: $modelData['published_at'] ?? '',
                 kind: $modelData['kind'] ?? '',
                 paletteIds: $modelData['palette_ids'] ?? [],
+                defaultPaletteId: is_string($defaultPaletteId) && $defaultPaletteId !== '' ? $defaultPaletteId : null,
             );
         }
 
@@ -105,6 +109,20 @@ readonly class ModelData
         }
 
         return $models[$name];
+    }
+
+    /**
+     * Palette applied when the caller does not choose one.
+     *
+     * Uses `default_palette_id` when present, otherwise the first palette id.
+     */
+    public function resolvedPaletteId(): ?string
+    {
+        if (is_string($this->defaultPaletteId) && $this->defaultPaletteId !== '') {
+            return $this->defaultPaletteId;
+        }
+
+        return $this->paletteIds[0] ?? null;
     }
 
     /**

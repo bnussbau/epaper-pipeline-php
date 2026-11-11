@@ -35,7 +35,8 @@ describe('Model', function (): void {
             ->and($model->getMimeType())->toBe('image/png')
             ->and($model->getOffsetX())->toBe(0)
             ->and($model->getOffsetY())->toBe(0)
-            ->and($model->getKind())->toBe('trmnl');
+            ->and($model->getKind())->toBe('trmnl')
+            ->and($model->getDefaultPaletteId())->toBe('bw');
     });
 
     it('can get TRMNL models', function (): void {
