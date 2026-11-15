@@ -81,7 +81,7 @@ describe('PaletteData', function (): void {
     it('throws when palettes JSON file does not exist', function (): void {
         $missingPath = sys_get_temp_dir().'/palettes-nonexistent-'.uniqid().'.json';
 
-        expect(fn () => PaletteData::loadFromJson($missingPath))
+        expect(fn (): array => PaletteData::loadFromJson($missingPath))
             ->toThrow(ProcessingException::class, 'Palettes JSON file not found at: '.$missingPath);
     });
 
@@ -92,7 +92,7 @@ describe('PaletteData', function (): void {
         }
         chmod($tmpFile, 0000);
         try {
-            expect(fn () => PaletteData::loadFromJson($tmpFile))
+            expect(fn (): array => PaletteData::loadFromJson($tmpFile))
                 ->toThrow(ProcessingException::class, 'Failed to read palettes JSON file');
         } finally {
             chmod($tmpFile, 0600);
@@ -107,7 +107,7 @@ describe('PaletteData', function (): void {
         }
         try {
             file_put_contents($tmpFile, '{ invalid json }');
-            expect(fn () => PaletteData::loadFromJson($tmpFile))
+            expect(fn (): array => PaletteData::loadFromJson($tmpFile))
                 ->toThrow(ProcessingException::class, 'Invalid JSON in palettes file:');
         } finally {
             unlink($tmpFile);
@@ -121,7 +121,7 @@ describe('PaletteData', function (): void {
         }
         try {
             file_put_contents($tmpFile, '123');
-            expect(fn () => PaletteData::loadFromJson($tmpFile))
+            expect(fn (): array => PaletteData::loadFromJson($tmpFile))
                 ->toThrow(ProcessingException::class, 'Invalid JSON structure: expected array');
         } finally {
             unlink($tmpFile);
@@ -135,7 +135,7 @@ describe('PaletteData', function (): void {
         }
         try {
             file_put_contents($tmpFile, '{}');
-            expect(fn () => PaletteData::loadFromJson($tmpFile))
+            expect(fn (): array => PaletteData::loadFromJson($tmpFile))
                 ->toThrow(ProcessingException::class, "Invalid palettes JSON structure: missing 'data' array");
         } finally {
             unlink($tmpFile);
@@ -149,7 +149,7 @@ describe('PaletteData', function (): void {
         }
         try {
             file_put_contents($tmpFile, '{"data":[{"name":"no-id"}]}');
-            expect(fn () => PaletteData::loadFromJson($tmpFile))
+            expect(fn (): array => PaletteData::loadFromJson($tmpFile))
                 ->toThrow(ProcessingException::class, "Palette data missing required 'id' field");
         } finally {
             unlink($tmpFile);

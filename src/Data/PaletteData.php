@@ -30,7 +30,7 @@ readonly class PaletteData
      */
     public static function loadFromJson(?string $jsonPath = null): array
     {
-        $jsonPath = $jsonPath ?? __DIR__.'/palettes.json';
+        $jsonPath ??= __DIR__.'/palettes.json';
 
         if (! file_exists($jsonPath)) {
             throw new ProcessingException("Palettes JSON file not found at: {$jsonPath}");

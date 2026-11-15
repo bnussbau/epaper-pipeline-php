@@ -146,6 +146,45 @@ describe('ImageStage', function (): void {
             ->and($stage->getBitDepth())->toBe(24);
     });
 
+    it('preserves RGB color when processing with a 24-bit tablet model', function (): void {
+        $testImagePath = sys_get_temp_dir().'/color_24bit_test_'.uniqid().'.png';
+        $imagick = new Imagick;
+        $imagick->newImage(50, 50, new ImagickPixel('white'));
+        $imagick->setImageFormat('png');
+        $draw = new ImagickDraw;
+        $draw->setFillColor('red');
+        $draw->rectangle(10, 10, 40, 40);
+        $imagick->drawImage($draw);
+        $imagick->writeImage($testImagePath);
+        $imagick->clear();
+
+        $stage = (new ImageStage)
+            ->configureFromModel(Model::RASPBERRY_PI_TOUCH_2)
+            ->width(50)
+            ->height(50)
+            ->dither(false);
+        $result = $stage($testImagePath);
+
+        expect($result)->toBeString();
+        expect(file_exists($result))->toBeTrue();
+
+        $resultImage = new Imagick($result);
+        $pixel = $resultImage->getImagePixelColor(25, 25);
+        $colors = $pixel->getColor();
+        $resultImage->clear();
+
+        expect($colors['r'])->toBeGreaterThan(200)
+            ->and($colors['g'])->toBeLessThan(50)
+            ->and($colors['b'])->toBeLessThan(50);
+
+        if (file_exists($testImagePath)) {
+            unlink($testImagePath);
+        }
+        if (file_exists($result)) {
+            unlink($result);
+        }
+    });
+
     it('uses webp for models that declare a webp mime type', function (): void {
         $stage = (new ImageStage)->configureFromModel(Model::TIDBYT);
 

@@ -614,17 +614,17 @@ class ImageStage implements StageInterface
      */
     private function isColorPalette(): bool
     {
-        // If palette ID is set, check the palette data directly
         if ($this->paletteId !== null) {
             $palette = PaletteData::getById($this->paletteId);
-            // If palette has colors array (not null), it's a color palette
-            if ($palette instanceof PaletteData) {
-                return $palette->colors !== null;
+            if ($palette instanceof PaletteData && $palette->colors !== null) {
+                return true;
             }
         }
 
-        // Use colors integer property - if > 0 and colormap is set, there are colors
-        // Default to false (grayscale)
+        if ($this->colors !== null && $this->colors > 256) {
+            return true;
+        }
+
         return $this->colors !== null && $this->colors > 0 && $this->colormap !== null;
     }
 
