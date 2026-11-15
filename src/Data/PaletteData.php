@@ -36,7 +36,14 @@ readonly class PaletteData
             throw new ProcessingException("Palettes JSON file not found at: {$jsonPath}");
         }
 
-        $jsonContent = file_get_contents($jsonPath);
+        set_error_handler(static fn (int $severity, string $message, string $file, int $line): bool => true);
+
+        try {
+            $jsonContent = file_get_contents($jsonPath);
+        } finally {
+            restore_error_handler();
+        }
+
         if ($jsonContent === false) {
             throw new ProcessingException('Failed to read palettes JSON file');
         }
