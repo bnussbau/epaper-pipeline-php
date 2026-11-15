@@ -2,6 +2,16 @@
 
 All notable changes to `trmnl-pipeline-php` will be documented in this file.
 
+## 1.2.0 - 2026-11-15
+
+### What's Changed
+
+* feat: update device models; use field default_palette_id
+* fix: full-color (24-bit) devices rendered as grayscale
+* chore(deps-dev): update pestphp/pest requirement from ^4.0 to ^5.3 by @dependabot[bot] in https://github.com/bnussbau/epaper-pipeline-php/pull/15
+
+**Full Changelog**: https://github.com/bnussbau/epaper-pipeline-php/compare/1.1.0...1.2.0
+
 ## 1.1.0 - 2026-07-29
 
 ### What's Changed
